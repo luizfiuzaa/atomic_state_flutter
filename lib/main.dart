@@ -1,8 +1,13 @@
+import 'package:asp/asp.dart';
+import 'package:atomic_state/counter_reducer.dart';
 import 'package:atomic_state/state.dart';
 import 'package:flutter/material.dart';
 
+final reducer = CounterReducer();
 void main() {
-  runApp(const MyApp());
+  reducer;
+
+  runApp(const RxRoot(child: MyApp()));
 }
 
 class MyApp extends StatelessWidget {
@@ -33,6 +38,8 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
+    final counter = context.select(() => counterState.value);
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
@@ -45,16 +52,19 @@ class _MyHomePageState extends State<MyHomePage> {
             const Text(
               'You have pushed the button this many times:',
             ),
-            Text(
-              '${counterState.value}',
-              style: Theme.of(context).textTheme.headlineMedium,
+            GestureDetector(
+              onTap: decrementAction.call,
+              child: Text(
+                '$counter',
+                style: Theme.of(context).textTheme.headlineMedium,
+              ),
             ),
           ],
         ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          incrementAction();
+          incrementAction.call();
         },
         tooltip: 'Increment',
         child: const Icon(Icons.add),
